@@ -46,19 +46,18 @@ exports.create = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: 'Image file is required' });
-    }
-
     const { title, description } = req.body;
 
-    const imagePath = `/uploads/about/${req.file.filename}`;
-
-    const created = await AboutDetail.create({
-      imagePath,
+    const doc = {
       title,
       description
-    });
+    };
+
+    if (req.file) {
+      doc.imagePath = `/uploads/about/${req.file.filename}`;
+    }
+
+    const created = await AboutDetail.create(doc);
 
     res.status(201).json({
       id: created._id,
